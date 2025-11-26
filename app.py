@@ -25,11 +25,15 @@ except json.JSONDecodeError:
 except Exception as e:
     print(f"An unexpected error occurred: {e}")
 
-# Group listings by location_id
-listing_by_location = defaultdict(list)
+# Group listings by location_id. made dictionary by location id key, and value is list of dictinaries of listing.
+listings_by_location = {}
 for listing in data:
-    listing_by_location[listing["location_id"]].append(listing)
-    print(listing) 
+    location_id = listing["location_id"]
+    if location_id not in listings_by_location:
+        listings_by_location[location_id] = []
+    listings_by_location[location_id].append(listing)
+
+
 
 def expand_request(request_items):
     """
@@ -116,15 +120,42 @@ def check_storage_fitness(vehicles, listing):
 
     return True  # All vehicles were placed successfully
 
-def find_storages(vehicles, listings):
-    valid_storage = []
-    for listing in listings:
-        if(check_storage_fitness(vehicles, listing)):
-            valid_storage.append(listing)
-    # Sort the valid_storage list by price_in_cents (ascending order)
-    sorted_storage = sorted(valid_storage, key=lambda x: x['price_in_cents'])
+def find_storages(vehicles):
+    valid_storages = []
+     # For each location_id, sort listings by price and check if they can fit all vehicles
+    for location_id, location_listings in listings_by_location.items():
+        listing_ids = []
+        total_price = 0  # Initialize total price for this location
+
+
+
+        # **Make a copy of the vehicles list for this location**
+        vehicles_copy = vehicles[:]  # Using slicing to copy the list
+
+        # Sort the listings for each location by price_in_cents (ascending order)
+        location_listings.sort(key=lambda x: x['price_in_cents'])
+
+        # Check each listing for the current location using check_storage_fitness()
+        for listing in location_listings:
+            if(len(vehicles_copy )== 0):
+                break
+            if check_storage_fitness(vehicles_copy, listing):
+                listing_ids.append(listing["id"])  # Add listing id
+                total_price += listing["price_in_cents"]  # Add the price of the listing
+        if(len(vehicles_copy) == 0 ):
+            valid_storages.append({
+                "location_id": location_id,
+                "listing_ids": listing_ids,
+                "total_price_in_cents": total_price
+            })
+    # Return the sorted valid storages by price_in_cents
+    return sorted(valid_storages, key=lambda x: x['total_price_in_cents'])
+
+
     
-    return sorted_storage
+    
+    
+    
 
 
 if __name__ == '__main__':
