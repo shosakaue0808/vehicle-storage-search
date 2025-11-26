@@ -151,11 +151,15 @@ def find_storages(vehicles):
     # Return the sorted valid storages by price_in_cents
     return sorted(valid_storages, key=lambda x: x['total_price_in_cents'])
 
-
-    
-    
-    
-    
+@app.route('/', methods=['POST'])
+def store_vehicles():
+    # get request and deseriarize it
+    request_items = request.get_json()
+    vehicles = expand_request(request_items)
+    results = find_storages(vehicles)
+    json = jsonify(results)
+    print(json)
+    return json
 
 
 if __name__ == '__main__':
