@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 import json
-from collections import defaultdict
 
 app = Flask(__name__)
 
@@ -157,9 +156,7 @@ def store_vehicles():
     request_items = request.get_json()
     vehicles = expand_request(request_items)
     results = find_storages(vehicles)
-    json = jsonify(results)
-    print(json)
-    return json
+    return jsonify(results)
 
 
 if __name__ == '__main__':
