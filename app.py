@@ -13,9 +13,6 @@ try:
     with open(file_path, 'r') as file:
         # Load the JSON data from the file into a Python object
         data = json.load(file)
-    
-    print("JSON data loaded successfully:")
-    print(data)
 
 except FileNotFoundError:
     print(f"Error: The file '{file_path}' was not found.")
@@ -156,7 +153,9 @@ def store_vehicles():
     request_items = request.get_json()
     vehicles = expand_request(request_items)
     results = find_storages(vehicles)
-    return jsonify(results)
+    json = jsonify(results)
+    print (json)
+    return json
 
 
 if __name__ == '__main__':
