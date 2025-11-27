@@ -97,7 +97,7 @@ def check_storage_fitness(vehicles, listing):
         bool: True if the storage fits all vehicles, False otherwise.
     """
     # Create lanes for the listing based on width / 10
-    num_lanes = listing["width"] / 10  # Number of lanes based on width of the storage
+    num_lanes = listing["width"] // 10  # Number of lanes based on width of the storage
     lanes = [{"remaining_length": listing["length"]} for _ in range(num_lanes)]
 
    # Iterate over each lane in the listing
